@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Brain Netflix: Scaling Data to Reconstruct Videos from Brain Signals</title>
+      <!-- Updated: Added Google Fonts -->
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400;1,700&family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css">
+      <link rel="stylesheet" href="styles.css">
+      <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-2.4.2.min.js"></script>
+      <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-2.4.2.min.js"></script>
+      <script type="text/javascript">
+          Bokeh.set_log_level("info");
+      </script>
+</head>
+<body>
+    <div class="content-container">
+
+    <!-- Title card -->
+    <section id="title-card">
+        <h1>Brain Netflix: Scaling Data to Reconstruct Videos from Brain Signals</h1>
+        <h2>Accepted at ECCV 2024</h2>
+      <div class="authors">
+        Camilo Fosco*, Benjamin Lahner*, Bowen Pan, Alex Andonian, Emilie Josephs, Alex Lascelles, Aude Oliva
+      </div>
+    <div class="buttons">
+        <a href="images/BrainGen_ECCV_2024.pdf" target="_blank">
+            <i class="fas fa-star"></i> Paper
+        </a>
+        <a href="images/BrainGen_ECCV_2024_supplement.pdf" target="_blank">
+          <i class="fas fa-star"></i> Supplement
+      </a>
+        <!--
+        <a href="https://github.com/cfosco/brain2video" target="_blank">
+            <i class="fab fa-github"></i> Project Github
+        </a>
+        <a href="gifs.html">
+          <i class="fas fa-images"></i> Compare Reconstructions
+        </a>
+      -->
+    </div>
+    </section>
+    <div>
+      <section>
+    <h2>Abstract</h2>
+    <p>
+      The field of brain-to-stimuli reconstruction has seen significant progress in the last few years, 
+      but techniques continue to be subject-specific and are usually tested on a single dataset. 
+      In this work, we present a novel technique to reconstruct videos from functional Magnetic Resonance
+      Imaging (fMRI) signals designed for performance across datasets and across human participants.
+      Our pipeline accurately generates 2 and 3-second video clips from brain activity coming from 
+      distinct participants and different datasets by leveraging multi-dataset and multi-subject
+      training. This helps us regress key latent and conditioning vectors for pretrained text-to-video 
+      and video-to-video models to reconstruct accurate videos that match the original stimuli
+      observed by the participant. Key to our pipeline is the introduction of a 3-stage approach
+      that first aligns fMRI signals to semantic embeddings, then regresses important vectors, 
+      and finally generates videos with those estimations. Our method demonstrates state-of-the-art 
+      reconstruction capabilities verified by qualitative and quantitative analyses, including
+      crowd-sourced human evaluation. We showcase performance improvements across two datasets, 
+      as well as in multi-subject setups. Our ablation studies shed light on how different
+      alignment strategies and data scaling decisions impact reconstruction performance, and 
+      we hint at a future for zero-shot reconstruction by analyzing how performance evolves as
+      more subject data is leveraged.
+    </p>
+    </section>
+    </div>
+    <div>
+    <section>
+      <img src="images/eccv_teaser.jpg" alt="reconstruction overview">
+    </section>
+    </div>
+
+    <div>
+      <section>
+      <h2>Reconstruction Framework</h2>
+      <p>
+        Our reconstruction framework is composed of three stages: 
+        <b>(1) Alignment</b> between fMRI and videos (CLIP embeddings) using Masked Brain Modeling (MBM),
+        <b>(2) Regression</b> of visual and semantic features into latent embeddings,
+        and <b>(3) Reconstruction</b> of videos from fMRI data using stage 1's MBM encoder, stage 2's latent embeddings,
+        and a video generation model. We achieve a large scale of data by compiling four large fMRI datasets:
+        Human Connectome Project resting state [1], BOLD Moments Dataset [2], Human Actions Dataset [3], and CC2017 [4].
+       We use Zeroscope V2 [1] as our video generation model as we find it achieves the best reconstruction results
+        (see our <a href="https://blahner.github.io/BrainNetflixICMLCVG/">ICML workshop paper</a> for a comparison of models).
+      </p>
+    </section>
+    </div>
+    <div>
+    <section>
+      <img src="images/Framework-v2_overview.png" alt="reconstruction framework">
+    </section>
+    </div>
+    <div>
+
+    <div>
+      <section>
+      <h2>Reconstruction Results</h2>
+      <p>
+        We find that our video reconstructions outperform other leading methodologies
+        in both qualitative (human judgement) and quantitative metrics.
+      </p>
+    </section>
+    </div>
+    <div>
+    <section>
+      <img src="images/reconstruction_results.png" alt="reconstruction results">
+    </section>
+    </div>
+    <div>
+
+    <div>
+      <section>
+      <h2>Zero Shot Reconstructions</h2>
+      <p>
+        We examine how well we can reconstruct videos from subject 1's fMRI data by training our pipeline on only fMRI data
+        from other subjects. We first show between-subject pairwise correlations in the BMD and CC2017 datasets to 
+        highlight shared brain responses throughout visual cortex and beyond (panel A). In panel B, we see that adding
+       fMRI data from additional subjects improves reconstruction performance on the left-out subject, but, at the 
+       scale achieved in this paper, the reconstructions do not yet meet the baseline.
+      </p>
+    </section>
+    </div>
+    <div>
+    <section>
+      <img src="images/zero_shot_both_plus_corr.jpg" alt="zero shot reconstructions">
+    </section>
+    </div>
+    <div>
+
+
+      <div>
+        <section>
+        <h2>More Reconstruction Examples and Failure Cases</h2>
+        <p>
+          We show more examples of successful reconstructions on the BOLD Moments Dataset and CC2017 dataset (panels A and D).
+          We also observe failure cases (panels B, C, E, F, G) where reconstructions contain high frequency noise,
+          dominance of semantic descriptions over low-level features, and superposition of shapes over an otherwise
+          faithful reconstruction.
+        </p>
+      </section>
+      </div>
+      <div>
+      <section>
+        <img src="images/good_bad_examples.jpg" alt="examples and failure cases">
+      </section>
+      </div>
+      <div>
+
+    <section>
+    <h2>References</h2>
+    <ol>
+      <li>
+        Van Essen, D. C., Smith, S. M., Barch, D. M., Behrens, T. E., Yacoub, E., Ugurbil, K., & Wu-Minn HCP Consortium. (2013). The WU-Minn human connectome project: an overview. Neuroimage, 80, 62-79.
+      </li>
+      <li>
+        Lahner, B., Dwivedi, K., Iamshchinina, P., Graumann, M., Lascelles, A., Roig, G., ... & Cichy, R. (2024). Modeling short visual events through the BOLD moments video fMRI dataset and metadata. Nature Communications, 15(1), 6241.
+      </li>
+      <li>
+        Zhou, M., Gong, Z., Dai, Y., Wen, Y., Liu, Y., & Zhen, Z. (2023). A large-scale fMRI dataset for human action recognition. Scientific Data, 10(1), 415.
+      </li>
+      <li>
+        Wen, H., Shi, J., Zhang, Y., Lu, K. H., Cao, J., & Liu, Z. (2018). Neural encoding and decoding with deep learning for dynamic natural vision. Cerebral cortex, 28(12), 4136-4160.
+      </li>
+      <li>Hysts. Zeroscope v2. https://huggingface.co/
+        spaces/hysts/zeroscope-v2, 2024. Accessed:
+        2024-06-05.
+      </li>
+    </ol>
+  </section>
+    </div>
+  
+</body>
+</html>
