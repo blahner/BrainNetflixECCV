@@ -18,109 +18,131 @@
     <h1>
      Reconstructions Gallery
     </h1>
+    <h3>
+     The majority of the reconstructions capture the correct colors, camera viewpoint, and semantics but struggle to piece them together in a natural way (Our <u>Good</u> column).
+     We also see instances of noise (<u>Failure</u>) and instances of faithful reconstructions (<u>Success</u>).
+    These reconstructions are from a model trained on data from all subjects and tested on subject 01 from the BOLD Moments Dataset.
+    Note that the Ground Truth GIFs are sped up versions of the original 3 second videos.
+    None of our reconstruction efforts employed any post-hoc selection procedure.
+    To receive all reconstructions (including training set and baseline oracle reconstructions) please contact the authors.
+    </h3>
    </section>
-   <!-- Controls to Add/Remove Reconstructed GIFs Columns -->
-   <h3 class="instructions">
-    Click on the buttons below to add or remove reconstruction sets. Each set is made with a different technique. Showing reconstructions on test videos from BOLDMoments.
-   </h3>
-   <div class="controls">
-    <button class="toggle-btn" data-folder="gifs/BMDgeneral_sub01_blip_avgrepsFalse">
-     BMDgeneral_sub01_blip_avgrepsFalse
-    </button>
-    <button class="toggle-btn" data-folder="gifs/BMDgeneral_sub01_blip_avgrepsFalse_lf3">
-     BMDgeneral_sub01_blip_avgrepsFalse_lf3
-    </button>
-    <button class="toggle-btn" data-folder="gifs/BMDgeneral_sub01">
-     BMDgeneral_sub01
-    </button>
-    <button class="toggle-btn" data-folder="gifs/BMDgeneral_sub01_blip_avgrepsFalse_lf2_regressorRidge">
-     BMDgeneral_sub01_blip_avgrepsFalse_lf2_regressorRidge
-    </button>
-   </div>
    <section id="gifs-section">
     <div class="columns-container">
-     <div class="column gif-names" id="gif-names-column">
-      <div class="column-title">
-       Video ID
+      <!-- Dynamic Columns Container -->
+      <div id="dynamic-columns" class="dynamic-columns">
+        <!-- Columns for "Failure", "Ok", and "Success" will be dynamically loaded here by JavaScript -->
       </div>
-      <!-- GIF names will be loaded here by JavaScript -->
-     </div>
-     <!-- Ground Truth Column -->
-     <div class="column ground-truth" id="ground-truth-column">
-      <div class="column-title">
-       Ground Truth Video
-      </div>
-      <!-- GIFs will be loaded here by JavaScript -->
-     </div>
-     <!-- Dynamic Columns Container -->
-     <div id="dynamic-columns">
-      <!-- Columns for reconstructed GIFs will be added here dynamically -->
-     </div>
     </div>
-   </section>
+  </section>
   </div>
-  <!-- JavaScript to handle dynamic columns -->
-  <script>
-   document.querySelectorAll('.toggle-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                let folder = this.getAttribute('data-folder');
-                if (this.classList.contains('active')) {
-                    // If the button is active, remove the column
-                    this.classList.remove('active');
-                    removeColumn(folder);
-                } else {
-                    // If the button is not active, add the column
-                    this.classList.add('active');
-                    addColumn(folder);
-                }
-            });
-        });
+<!-- JavaScript to dynamically load GIFs into columns -->
+<script>
+    // Define the folders for each category and the specific GIFs to display
+    const gifCategories = {
+      'Failure': {
+        folder: 'gifs/bmd_final_results_allsubj_sub01_selection/gif',
+        gifs: [1003,1030,1035,1046,1057,1026,1033,1042,1049,1079] // Specific GIFs to display in the 'failure' category
+      },
+      'Good': {
+        folder: 'gifs/bmd_final_results_allsubj_sub01_selection/gif',
+        gifs: [1002,1016,1025,1032,1066,1076,1081,1096,1013,1024,1029,1056,1067,1077,1085,1101] // Specific GIFs to display in the 'ok' category
+      },
+      'Success': {
+        folder: 'gifs/bmd_final_results_allsubj_sub01_selection/gif',
+        gifs: [1008,1017,1028,1047,1093,1014,1019,1043,1060,1098] // Specific GIFs to display in the 'success' category
+      }
+    };
+// Dynamically load GIFs into columns based on the specific GIFs for each category
+function loadGifsIntoColumns() {
+  Object.entries(gifCategories).forEach(([category, data]) => {
+    // Create the main column container for each category
+    const columnContainer = document.createElement('div');
+    columnContainer.className = 'column-container';
+    columnContainer.setAttribute('data-category', category);
 
-        function addColumn(folder) {
-            let column = document.createElement('div');
-            column.className = 'column reconstructed';
-            column.setAttribute('data-folder', folder); // Set a data attribute to identify the column later
-            
-            // Add title to the column
-            let titleElement = document.createElement('div');
-            titleElement.className = 'column-title';
-            titleElement.textContent = folder.split('/').pop(); // Extracting the folder name for the title
-            column.appendChild(titleElement);
+    // Add title to the column
+    const titleElement = document.createElement('div');
+    titleElement.className = 'column-title';
+    titleElement.textContent = category.charAt(0).toUpperCase() + category.slice(1); // Capitalize first letter
+    columnContainer.appendChild(titleElement);
 
-            for (let i = 1001; i <= 1102; i++) {
-                let gifNumber = i.toString().padStart(4, '0');
-                let gifElement = document.createElement('img');
-                gifElement.src = `${folder}/gif/${gifNumber}.gif`;
-                gifElement.alt = `${folder} gif ${gifNumber}`;
-                column.appendChild(gifElement);
-            }
-            
-            document.getElementById('dynamic-columns').appendChild(column);
-        }
+    // Create sub-columns for "Ground Truth" and "Reconstructed"
+    const gifPair = document.createElement('div');
+    gifPair.className = 'gif-pair';
 
-        function removeColumn(folder) {
-            let columns = document.querySelectorAll(`.column.reconstructed[data-folder="${folder}"]`);
-            if (columns.length > 0) {
-                columns[0].remove();
-            }
-        }
-  </script>
-  <script>
-   for (let i = 1001; i <= 1102; i++) {
-            let gifNumber = i.toString().padStart(4, '0'); // This will convert 1 to 0001, 2 to 0002, etc.
-                
-            // Create and append the GIF name
-            let nameElement = document.createElement('div');
-            nameElement.className = 'gif-name';
-            nameElement.textContent = `${gifNumber}`;
-            document.getElementById('gif-names-column').appendChild(nameElement);
+    // Ground Truth Sub-column
+    const groundTruthColumn = document.createElement('div');
+    groundTruthColumn.className = 'sub-column';
+    const groundTruthTitle = document.createElement('div');
+    groundTruthTitle.className = 'sub-column-title';
+    groundTruthTitle.textContent = 'Ground Truth';
+    groundTruthColumn.appendChild(groundTruthTitle);
 
-            
-            let gifElement = document.createElement('img');
-            gifElement.src = `gifs/ground_truth/${gifNumber}.gif`;
-            gifElement.alt = `Ground truth gif ${gifNumber}`;
-            document.getElementById('ground-truth-column').appendChild(gifElement);
-        }
-  </script>
+    // Reconstructed Sub-column
+    const resultsColumn = document.createElement('div');
+    resultsColumn.className = 'sub-column';
+    const resultsTitle = document.createElement('div');
+    resultsTitle.className = 'sub-column-title';
+    resultsTitle.textContent = 'Reconstructed';
+    resultsColumn.appendChild(resultsTitle);
+
+    // Add only the specific GIFs to the columns
+    data.gifs.forEach(gifNumber => {
+      // Ground Truth GIF
+      let groundTruthGif = document.createElement('img');
+      groundTruthGif.src = `gifs/ground_truth/${gifNumber}.gif`;
+      groundTruthGif.alt = `Ground Truth gif ${gifNumber}`;
+      
+      // Container for Ground Truth GIF and ID
+      let groundTruthContainer = document.createElement('div');
+      groundTruthContainer.className = 'gif-container';
+      
+      // Add GIF to the container
+      groundTruthContainer.appendChild(groundTruthGif);
+      
+      // Add ID below the GIF
+      let groundTruthIdElement = document.createElement('div');
+      groundTruthIdElement.className = 'gif-id';
+      groundTruthIdElement.textContent = `ID: ${gifNumber}`;
+      groundTruthContainer.appendChild(groundTruthIdElement);
+      
+      groundTruthColumn.appendChild(groundTruthContainer);
+
+      // Reconstructed GIF for the current category
+      let resultsGif = document.createElement('img');
+      resultsGif.src = `${data.folder}/${gifNumber}.gif`;
+      resultsGif.alt = `${category} gif ${gifNumber}`;
+      
+      // Container for Reconstructed GIF and ID
+      let resultsContainer = document.createElement('div');
+      resultsContainer.className = 'gif-container';
+      
+      // Add GIF to the container
+      resultsContainer.appendChild(resultsGif);
+      
+      // Add ID below the GIF
+      let resultsIdElement = document.createElement('div');
+      resultsIdElement.className = 'gif-id';
+      resultsIdElement.textContent = `ID: ${gifNumber}`;
+      resultsContainer.appendChild(resultsIdElement);
+      
+      resultsColumn.appendChild(resultsContainer);
+    });
+
+    // Append sub-columns to the main column container
+    gifPair.appendChild(groundTruthColumn);
+    gifPair.appendChild(resultsColumn);
+    columnContainer.appendChild(gifPair);
+
+    // Add the new column to the dynamic-columns container
+    document.getElementById('dynamic-columns').appendChild(columnContainer);
+  });
+}
+
+// Call function to load GIFs
+loadGifsIntoColumns();
+</script>
+  
  </body>
 </html>
