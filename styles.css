@@ -397,7 +397,7 @@ img {
 /* Container for all dynamic columns */
 .columns-container {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; /* Space out columns evenly */
     border-left: 2px solid #ddd; /* Border on the far left */
     border-right: 2px solid #ddd; /* Border on the far right */
     padding: 1%; /* Adds padding around the container to avoid border clash */
@@ -406,8 +406,9 @@ img {
   
   /* Each column container */
   .column-container {
-    width: 30%;
+    flex: 1; /* Flex-grow to make all columns equally wide */
     margin: 0; /* Remove margin to ensure columns are aligned properly */
+    padding: 0 20px; /* Add padding inside the columns */
     box-sizing: border-box; /* Includes padding and border in the element's total width and height */
     position: relative; /* Allows absolute positioning of the title */
   }
