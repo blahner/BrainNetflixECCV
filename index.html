@@ -45,7 +45,19 @@
     </div>
     </section>
     <div>
-      <section>
+    <section>
+      <!-- Thumbnail image and button -->
+      <div onclick="openModal()" style="cursor: pointer;">
+        <img src="images/Brainflix_poster_ECCV2024.png " alt="Poster Thumbnail" style="width: 150px;">
+        <p>Click to view our poster</p>
+      </div>
+
+      <!-- Full-screen modal -->
+      <div id="posterModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); align-items: center; justify-content: center;">
+        <span onclick="closeModal()" style="position: absolute; top: 10px; right: 20px; color: white; font-size: 30px; cursor: pointer;">&times;</span>
+        <img src="images/Brainflix_poster_ECCV2024.png " alt="Full Poster" style="max-width: 90%; max-height: 90%;">
+      </div>
+
     <h2>Abstract</h2>
     <p>
       The field of brain-to-stimuli reconstruction has seen significant progress in the last few years, 
@@ -183,6 +195,14 @@
     </ol>
   </section>
   </div>
-  
+  <script>
+    function openModal() {
+        document.getElementById("posterModal").style.display = "flex";
+    }
+
+    function closeModal() {
+        document.getElementById("posterModal").style.display = "none";
+    }
+  </script>
 </body>
 </html>
